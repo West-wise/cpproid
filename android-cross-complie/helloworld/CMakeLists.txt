@@ -1,0 +1,16 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
+PROJECT(hello-world)
+
+# 사용할 대상 이름 설정
+SET(OBJECT_FILE ${CMAKE_PROJECT_NAME})
+
+# 대상이 정의되었을 경우 대상 이름에 추가
+IF(DEFINED TARGET AND DEFINED ARCHITETURE)
+  SET(OBJECT_FILE "${OBJECT_FILE}-${ARCHITETURE}")
+ENDIF()
+
+# 소스 파일 설정
+set(SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/hello-world.c)
+
+# 실행 파일 생성
+add_executable(${OBJECT_FILE} ${SOURCES})
