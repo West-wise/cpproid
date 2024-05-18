@@ -1,23 +1,39 @@
+#pragma once
 #include <iostream>
-#include <pcap.h>
-#include <cstring>
+#include <string>
+
+#ifdef _WIN32
+#include <Windows.h>
+#include <iphlpapi.h>
 #include <vector>
+#pragma comment(lib, "iphlpapi.lib")
+#else
+#include <fstream>
+#include <sstream>
 #include <map>
-#include <unordered_map>
+#include <vector>
+#endif
 
+class RoutingTable {
+private:
+    RoutingTable() {}
+    virtual ~RoutingTable() {}
 
-// Kernel IP routing table
-// Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
-// 0.0.0.0         192.168.180.2   0.0.0.0         UG    100    0        0 eth0
-// 192.168.180.0   0.0.0.0         255.255.255.0   U     100    0        0 eth0
-class RoutingTable{
-    private:
-        RoutingTable();
-        virtual ~RoutingTable();
-    
-    private:
-        std::map<int,std::string> interface_name;
+    static RoutingTable* _instance;
 
-    public:
-        static RoutingTable* getInstance();
+public:
+    static RoutingTable* getInstance() {
+        if (_instance == nullptr) {
+            _instance = new RoutingTable();
+        }
+        return _instance;
+    }
+
+    void printRoutingTable();
+
+#ifdef _WIN32
+    std::string convertIpToString(DWORD ip);
+#else
+    std::string convertHexToIp(const std::string& hex);
+#endif
 };
