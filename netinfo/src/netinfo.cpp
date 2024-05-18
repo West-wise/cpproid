@@ -1,10 +1,4 @@
 #include "netinfo.h"
-#include <pcap.h>
-#include <sys/ioctl.h>
-#include <net/if.h>
-#include <unistd.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 
 NetInterface* NetInterface::_instance = nullptr;
 
@@ -81,6 +75,26 @@ std::unordered_map<std::string, std::string> NetInterface::getInterfaceMask() {
     return result;
 }
 
+
+#ifdef _WIN32
+void printWindowsNetworkInfo() {
+    ULONG bufferSize = 0;
+    GetAdaptersInfo(NULL, &bufferSize);
+    PIP_ADAPTER_INFO adapterInfo = (PIP_ADAPTER_INFO) malloc(bufferSize);
+    GetAdaptersInfo(adapterInfo, &bufferSize);
+
+    PIP_ADAPTER_INFO currentAdapter = adapterInfo;
+    while (currentAdapter) {
+        std::cout << currentAdapter->AdapterName << "\t";
+        printMacAddress(currentAdapter->Address);
+        std::cout << "\t" << currentAdapter->IpAddressList.IpAddress.String << "\t";
+        std::cout << currentAdapter->IpAddressList.IpMask.String << std::endl;
+        currentAdapter = currentAdapter->Next;
+    }
+
+    free(adapterInfo);
+}
+#else
 void NetInterface::printInterfaceInfo() {
     // 네트워크 인터페이스 정보 수집
     std::unordered_map<std::string, std::string> macs = getInterfaceMac();
@@ -117,3 +131,4 @@ void NetInterface::printInterfaceInfo() {
         }
     }
 }
+#endif
