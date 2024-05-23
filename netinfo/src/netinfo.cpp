@@ -22,12 +22,12 @@ void NetInterface::getInterfaceNameList(std::set<std::string>* _if_name) {
     pcap_freealldevs(alldevs);
 }
 
-std::unordered_map<std::string, std::string> NetInterface::getInterfaceMac() {
+std::unordered_map<std::string, std::string> NetInterface::getInterfaceMac(std::set<std::string> if_set) {
     std::unordered_map<std::string, std::string> result;
     struct ifreq ifr;
     int fd = socket(AF_INET, SOCK_DGRAM, 0);
 
-    for (const auto& interface : _if_name) {
+    for (const auto& interface : if_set) {
         strcpy(ifr.ifr_name, interface.c_str());
         if (ioctl(fd, SIOCGIFHWADDR, &ifr) != -1) {
             unsigned char* mac = reinterpret_cast<unsigned char*>(ifr.ifr_hwaddr.sa_data);
@@ -41,12 +41,12 @@ std::unordered_map<std::string, std::string> NetInterface::getInterfaceMac() {
     return result;
 }
 
-std::unordered_map<std::string, std::string> NetInterface::getInterfaceIp() {
+std::unordered_map<std::string, std::string> NetInterface::getInterfaceIp(std::set<std::string> if_set) {
     std::unordered_map<std::string, std::string> result;
     struct ifreq ifr;
     int fd = socket(AF_INET, SOCK_DGRAM, 0);
 
-    for (const auto& interface : _if_name) {
+    for (const auto& interface : if_set) {
         strcpy(ifr.ifr_name, interface.c_str());
         if (ioctl(fd, SIOCGIFADDR, &ifr) != -1) {
             struct sockaddr_in* ipaddr = reinterpret_cast<struct sockaddr_in*>(&ifr.ifr_addr);
@@ -58,12 +58,12 @@ std::unordered_map<std::string, std::string> NetInterface::getInterfaceIp() {
     return result;
 }
 
-std::unordered_map<std::string, std::string> NetInterface::getInterfaceMask() {
+std::unordered_map<std::string, std::string> NetInterface::getInterfaceMask(std::set<std::string> if_set) {
     std::unordered_map<std::string, std::string> result;
     struct ifreq ifr;
     int fd = socket(AF_INET, SOCK_DGRAM, 0);
 
-    for (const auto& interface : _if_name) {
+    for (const auto& interface : if_set) {
         strcpy(ifr.ifr_name, interface.c_str());
         if (ioctl(fd, SIOCGIFNETMASK, &ifr) != -1) {
             struct sockaddr_in* mask = reinterpret_cast<struct sockaddr_in*>(&ifr.ifr_netmask);
@@ -97,32 +97,26 @@ void printWindowsNetworkInfo() {
 #else
 void NetInterface::printInterfaceInfo() {
     // 네트워크 인터페이스 정보 수집
-    std::unordered_map<std::string, std::string> macs = getInterfaceMac();
-    std::unordered_map<std::string, std::string> ips = getInterfaceIp();
-    std::unordered_map<std::string, std::string> masks = getInterfaceMask();
+    std::unordered_map<std::string, std::string> macs = getInterfaceMac(_if_name);
+    std::unordered_map<std::string, std::string> ips = getInterfaceIp(_if_name);
+    std::unordered_map<std::string, std::string> masks = getInterfaceMask(_if_name);
 
     // 출력
     std::cout << "NAME\t\tMAC\t\t\tIP\t\t\tMASK\n";
     for (const auto& interface : _if_name) {
         std::cout << interface << "\t\t";
-        
-        // MAC 주소 출력
         auto mac_it = macs.find(interface);
         if (mac_it != macs.end()) {
             std::cout << mac_it->second << "\t";
         } else {
             std::cout << "[NOT AVAILABLE]\t\t";
         }
-
-        // IP 주소 출력
         auto ip_it = ips.find(interface);
         if (ip_it != ips.end()) {
             std::cout << ip_it->second << "\t\t";
         } else {
             std::cout << "[NOT AVAILABLE]\t\t";
         }
-
-        // 마스크 출력
         auto mask_it = masks.find(interface);
         if (mask_it != masks.end()) {
             std::cout << mask_it->second << "\n";
