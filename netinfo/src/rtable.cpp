@@ -1,58 +1,6 @@
 #include "rtable.h"
 
 RoutingTable* RoutingTable::_instance = nullptr;
-
-#ifdef _WIN32
-
-void RoutingTable::printRoutingTable() {
-    MIB_IPFORWARDTABLE* pIpForwardTable;
-    DWORD dwSize = 0;
-    DWORD dwRetVal = 0;
-
-    pIpForwardTable = (MIB_IPFORWARDTABLE*)malloc(sizeof(MIB_IPFORWARDTABLE));
-    if (pIpForwardTable == nullptr) {
-        std::cerr << "Error allocating memory for IP forward table" << std::endl;
-        return;
-    }
-
-    if (GetIpForwardTable(pIpForwardTable, &dwSize, 0) == ERROR_INSUFFICIENT_BUFFER) {
-        free(pIpForwardTable);
-        pIpForwardTable = (MIB_IPFORWARDTABLE*)malloc(dwSize);
-        if (pIpForwardTable == nullptr) {
-            std::cerr << "Error allocating memory for IP forward table" << std::endl;
-            return;
-        }
-    }
-
-    if ((dwRetVal = GetIpForwardTable(pIpForwardTable, &dwSize, 0)) == NO_ERROR) {
-        std::cout << "Destination\tGateway\t\tGenmask\t\tFlags\tMetric\tIface" << std::endl;
-
-        for (int i = 0; i < (int)pIpForwardTable->dwNumEntries; i++) {
-            std::cout << convertIpToString(pIpForwardTable->table[i].dwForwardDest) << "\t"
-                      << convertIpToString(pIpForwardTable->table[i].dwForwardNextHop) << "\t"
-                      << convertIpToString(pIpForwardTable->table[i].dwForwardMask) << "\t"
-                      << pIpForwardTable->table[i].dwForwardProto << "\t"
-                      << pIpForwardTable->table[i].dwForwardMetric1 << "\t"
-                      << pIpForwardTable->table[i].dwForwardIfIndex << std::endl;
-        }
-    } else {
-        std::cerr << "GetIpForwardTable failed with error: " << dwRetVal << std::endl;
-    }
-
-    if (pIpForwardTable) {
-        free(pIpForwardTable);
-        pIpForwardTable = nullptr;
-    }
-}
-
-std::string RoutingTable::convertIpToString(DWORD ip) {
-    struct in_addr ipAddr;
-    ipAddr.S_un.S_addr = ip;
-    return std::string(inet_ntoa(ipAddr));
-}
-
-#else
-
 void RoutingTable::printRoutingTable() {
     std::ifstream file("/proc/net/route");
     if (!file.is_open()) {
@@ -90,4 +38,3 @@ std::string RoutingTable::convertHexToIp(const std::string& hex) {
            std::to_string((ip >> 24) & 0xFF);
 }
 
-#endif

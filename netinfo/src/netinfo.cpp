@@ -6,19 +6,14 @@ void NetInterface::getInterfaceNameList(std::set<std::string>* _if_name) {
     pcap_if_t *alldevs;
     char errbuf[PCAP_ERRBUF_SIZE];
 
-    // 모든 네트워크 인터페이스 가져오기
     if (pcap_findalldevs(&alldevs, errbuf) == -1) {
         std::cout << "pcap_findalldevs error: " << errbuf << std::endl;
         return;
     }
 
-    // 네트워크 인터페이스 목록 순회
     for (pcap_if_t *d = alldevs; d != NULL; d = d->next) {
-        // 인터페이스 이름 저장
         _if_name->insert(d->name);
     }
-
-    // 네트워크 인터페이스 목록 해제
     pcap_freealldevs(alldevs);
 }
 
@@ -74,27 +69,6 @@ std::unordered_map<std::string, std::string> NetInterface::getInterfaceMask(std:
     close(fd);
     return result;
 }
-
-
-#ifdef _WIN32
-void printWindowsNetworkInfo() {
-    ULONG bufferSize = 0;
-    GetAdaptersInfo(NULL, &bufferSize);
-    PIP_ADAPTER_INFO adapterInfo = (PIP_ADAPTER_INFO) malloc(bufferSize);
-    GetAdaptersInfo(adapterInfo, &bufferSize);
-
-    PIP_ADAPTER_INFO currentAdapter = adapterInfo;
-    while (currentAdapter) {
-        std::cout << currentAdapter->AdapterName << "\t";
-        printMacAddress(currentAdapter->Address);
-        std::cout << "\t" << currentAdapter->IpAddressList.IpAddress.String << "\t";
-        std::cout << currentAdapter->IpAddressList.IpMask.String << std::endl;
-        currentAdapter = currentAdapter->Next;
-    }
-
-    free(adapterInfo);
-}
-#else
 void NetInterface::printInterfaceInfo() {
     // 네트워크 인터페이스 정보 수집
     std::unordered_map<std::string, std::string> macs = getInterfaceMac(_if_name);
@@ -125,4 +99,3 @@ void NetInterface::printInterfaceInfo() {
         }
     }
 }
-#endif

@@ -7,21 +7,15 @@
 #include <unordered_map>
 #include <set>
 
-#ifdef _WIN32
-    #include <winsock2.h>
-    #include <iphlpapi.h>
-    #pragma comment(lib, "IPHLPAPI.lib")
-    #pragma comment(lib, "Ws2_32.lib")
-#else
-    #include <sys/types.h>
-    #include <sys/socket.h>
-    #include <ifaddrs.h>
-    #include <netinet/in.h>
-    #include <net/if.h>
-    #include <unistd.h>
-    #include <arpa/inet.h>
-    #include <sys/ioctl.h>
-#endif
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <ifaddrs.h>
+#include <netinet/in.h>
+#include <net/if.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <sys/ioctl.h>
+
 // NAME        MAC                  IP                  MASK         
 // eth0        00:0c:29:50:5e:11    192.168.180.128     255.255.255.0   
 
@@ -55,9 +49,6 @@ public:
     std::unordered_map<std::string, std::string> getInterfaceMac(std::set<std::string> if_set);
     std::unordered_map<std::string, std::string> getInterfaceIp(std::set<std::string> if_set);
     std::unordered_map<std::string, std::string> getInterfaceMask(std::set<std::string> if_set);
-    #ifdef _WIN32
-        void printWindowsNetworkInfo()
-    #else
-        void printInterfaceInfo();
-    #endif
+    void printInterfaceInfo();
+
 };
