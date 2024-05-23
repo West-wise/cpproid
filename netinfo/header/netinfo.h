@@ -52,9 +52,9 @@ public:
     }
 
     void getInterfaceNameList(std::set <std::string> *_if_name);
-    std::unordered_map<std::string, std::string> getInterfaceMac();
-    std::unordered_map<std::string, std::string> getInterfaceIp();
-    std::unordered_map<std::string, std::string> getInterfaceMask();
+    std::unordered_map<std::string, std::string> getInterfaceMac(std::set<std::string> if_set);
+    std::unordered_map<std::string, std::string> getInterfaceIp(std::set<std::string> if_set);
+    std::unordered_map<std::string, std::string> getInterfaceMask(std::set<std::string> if_set);
     #ifdef _WIN32
         void printWindowsNetworkInfo()
     #else
