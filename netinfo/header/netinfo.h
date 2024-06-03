@@ -6,6 +6,7 @@
 #include <map>
 #include <unordered_map>
 #include <set>
+#include <stdexcept>
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -16,39 +17,34 @@
 #include <arpa/inet.h>
 #include <sys/ioctl.h>
 
-// NAME        MAC                  IP                  MASK         
-// eth0        00:0c:29:50:5e:11    192.168.180.128     255.255.255.0   
+#include "mac.h"
+#include "ip.h"
 
 class NetInterface {
 private:
     static NetInterface* _instance;
     std::set<std::string> _if_name;
-    std::unordered_map<std::string, std::string> _if_mac;
-    std::unordered_map<std::string, std::string> _if_ip;
-    std::unordered_map<std::string, std::string> _if_mask;
+    std::unordered_map<std::string, Mac> _if_mac;
+    std::unordered_map<std::string, Ip> _if_ip;
+    std::unordered_map<std::string, Ip> _if_mask;
 
     NetInterface() {
-        // 초기화 작업 수행
         getInterfaceNameList(&_if_name);
     }
 
-    virtual ~NetInterface() {
-        // 정리 작업 수행
-    }
+    virtual ~NetInterface() {}
 
 public:
     static NetInterface* getInstance() {
-        // 인스턴스가 아직 생성되지 않았다면 생성합니다.
         if (_instance == nullptr) {
             _instance = new NetInterface();
         }
         return _instance;
     }
 
-    void getInterfaceNameList(std::set <std::string> *_if_name);
-    std::unordered_map<std::string, std::string> getInterfaceMac(std::set<std::string> if_set);
-    std::unordered_map<std::string, std::string> getInterfaceIp(std::set<std::string> if_set);
-    std::unordered_map<std::string, std::string> getInterfaceMask(std::set<std::string> if_set);
+    void getInterfaceNameList(std::set<std::string>* _if_name);
+    std::unordered_map<std::string, Mac> getInterfaceMac(const std::set<std::string>& if_set);
+    std::unordered_map<std::string, Ip> getInterfaceIp(const std::set<std::string>& if_set);
+    std::unordered_map<std::string, Ip> getInterfaceMask(const std::set<std::string>& if_set);
     void printInterfaceInfo();
-
 };

@@ -14,17 +14,15 @@ include_directories(${LIBPCAP_INCLUDE_DIR})
 include_directories(${LIBPCAP_LIBRARY_DIR})
 
 # 프로젝트를 정의하고 소스 파일을 추가합니다.
-project(netinfo-${BIT})
+project(myIp-${BIT})
 add_compile_options(-g)
 add_compile_options(-O2 -std=c++14)
 
 
 # 소스 파일들을 변수에 저장합니다.
 set(SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/../src/mac.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/ip.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../src/rtable.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../src/netinfo.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../src/mac.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/main.cpp
 )
 

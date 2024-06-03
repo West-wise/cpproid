@@ -20,14 +20,14 @@ add_compile_options(-O2 -std=c++14)
 
 
 # 소스 파일들을 변수에 저장합니다.
-set(SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/../src/mac.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../src/ip.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../src/rtable.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../src/netinfo.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../src/main.cpp
-)
-
+# set(SOURCES
+#     ${CMAKE_CURRENT_SOURCE_DIR}/../src/mac.cpp
+#     ${CMAKE_CURRENT_SOURCE_DIR}/../src/ip.cpp
+#     ${CMAKE_CURRENT_SOURCE_DIR}/../src/rtable.cpp
+#     ${CMAKE_CURRENT_SOURCE_DIR}/../src/netinfo.cpp
+#     ${CMAKE_CURRENT_SOURCE_DIR}/../src/main.cpp
+# )
+file(GLOB SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/../src/*.cpp")
 # 실행 파일을 추가합니다.
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})
 
