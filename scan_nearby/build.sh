@@ -31,4 +31,6 @@ else
     exit 1
 fi
 
+llvm-strip scan-64
 make install
+sh clean.sh
