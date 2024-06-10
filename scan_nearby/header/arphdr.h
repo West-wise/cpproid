@@ -1,7 +1,10 @@
 #pragma once
-#include "INCLUDE.h"
+
+#include <cstdint>
+#include <arpa/inet.h>
 #include "mac.h"
 #include "ip.h"
+
 
 #pragma pack(push, 1)
 struct ArpHdr final {

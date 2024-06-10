@@ -1,5 +1,6 @@
 #pragma once
-#include "INCLUDE.h"
+
+#include <arpa/inet.h>
 #include "mac.h"
 
 #pragma pack(push, 1)

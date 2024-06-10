@@ -3,7 +3,6 @@
 #include <cstdint>
 #include <cstring>
 #include <string>
-#include <fstream>
 
 
 // ----------------------------------------------------------------------------
@@ -54,7 +53,6 @@ struct Mac final {
 	static Mac& nullMac();
 	static Mac& broadcastMac();
 
-	static Mac& getMyMac(const std::string&);
     static Mac& getTargetMac(const std::string&);
     Mac& getSenderMac(const std::string&);
 
@@ -62,11 +60,11 @@ protected:
 	uint8_t mac_[SIZE];
 };
 
-namespace std {
-	template<>
-	struct hash<Mac> {
-		size_t operator() (const Mac& r) const {
-			return std::_Hash_impl::hash(&r, Mac::SIZE);
-		}
-	};
-}
+// namespace std {
+// 	template<>
+// 	struct hash<Mac> {
+// 		size_t operator() (const Mac& r) const {
+// 			return std::_Hash_impl::hash(&r, Mac::SIZE);
+// 		}
+// 	};
+// }
